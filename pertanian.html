@@ -1,0 +1,244 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Agriculture Website</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+
+ <!-- Navigation Section -->
+ <nav class="bg-white shadow-md">
+    <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-6">
+        <a class="text-xl md:text-2xl font-bold text-green-600 flex items-center" href="#">
+            <img src="https://res.cloudinary.com/dvavtg6tx/image/upload/v1732870375/photo_6217269223625965876_y_oqa6mj.jpg" 
+                 alt="Sawahin Image" 
+                 class="w-8 h-8 mr-2">
+            PengairanSawah
+        </a>
+
+        <ul class="flex space-x-4 md:space-x-6 text-sm md:text-base">
+            <li><a class="text-gray-700 hover:text-green-600" href="home.html">Home</a></li>
+            <li><a class="text-gray-700 hover:text-green-600" href="services.html">Services</a></li>
+            <li><a class="text-gray-700 hover:text-green-600" href="about.html">About Us</a></li>
+            <li><a class="text-gray-700 hover:text-green-600" href="blog.html">Blog</a></li>
+            <li><a class="text-gray-700 hover:text-green-600" href="contact.html">Contact</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<!-- Hero Section -->
+<section class="response">
+    <div class="container mx-auto p-10">
+        <img alt="Farmer watering plants in a field" class="w-full h-auto max-h-96 object-cover" 
+             src="https://storage.googleapis.com/a1aa/image/ymKYOlgUXSJKDFkPLEfX3DhPsFhL7DFg8odluPaDQ09WQr8JA.jpg"/>
+    </div>
+</section>
+
+
+<!-- Statistics Section -->
+<section class="py-8 md:py-12 bg-gray-100">
+    <div class="container mx-auto px-4 flex flex-wrap justify-center gap-4" id="statsSection">
+        <!-- Data will be populated here -->
+    </div>
+</section>
+<!-- Supabase Data Section -->
+<section class="py-12 bg-gray-100">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Data Tanah</h2>
+        <div id="supabase-data" class="bg-white p-6 rounded-lg shadow-md text-left">
+            <!-- Data from Supabase will be inserted here -->
+        </div>
+    </div>
+</section>
+<script>
+    const supabaseURL = "https://iqdnpgggupisxhhfepbi.supabase.co";
+    const apiKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlxZG5wZ2dndXBpc3hoaGZlcGJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzE0NzE3NDEsImV4cCI6MjA0NzA0Nzc0MX0.s2aDzTXB0Q4OQF9YSO8amZ8syCVkCNWU5ORfLf_v8l0";
+
+    async function fetchData() {
+        try {
+            const response = await fetch(`${supabaseURL}/rest/v1/tanah?select=kelembapan,hujan,created_at&order=created_at.desc&limit=1`, {
+                method: 'GET',
+                headers: {
+                    'apikey': apiKey,
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            // Cek apakah response berhasil
+            if (!response.ok) {
+                throw new Error(`Error fetching data: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('Data yang diterima:', data); // Menampilkan data yang diterima untuk debugging
+
+            // Pastikan data ditemukan dan tampilkan
+            if (data.length > 0) {
+                displayData(data[0]); // Tampilkan data terbaru
+            } else {
+                console.log("Tidak ada data ditemukan");
+                const container = document.getElementById('supabase-data');
+                container.innerHTML = "<p>Data tidak tersedia.</p>";
+            }
+        } catch (error) {
+            console.error('Terjadi kesalahan:', error); // Menangani kesalahan
+            const container = document.getElementById('supabase-data');
+            container.innerHTML = `<p>Terjadi kesalahan: ${error.message}</p>`;
+        }
+    }
+
+    function displayData(item) {
+        const container = document.getElementById('supabase-data');
+        container.innerHTML = ''; // Hapus data lama
+
+        // Membuat div untuk kelembapan
+        const kelembapanDiv = document.createElement('div');
+        kelembapanDiv.className = 'mb-4';
+        kelembapanDiv.innerHTML = `
+            <h4 class="text-lg font-bold">Kelembapan: ${item.kelembapan}</h4>
+        `;
+        container.appendChild(kelembapanDiv);
+
+        // Membuat div untuk hujan
+        const hujanDiv = document.createElement('div');
+        hujanDiv.className = 'mb-4';
+        hujanDiv.innerHTML = `
+            <p class="mt-2 text-gray-600">Hujan: ${item.hujan}</p>
+        `;
+        container.appendChild(hujanDiv);
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchData);
+</script>
+
+
+
+<!-- Offerings Section -->
+<section class="py-8 md:py-12">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">Why Choose Us</h2>
+        <h3 class="text-3xl md:text-4xl font-bold mb-8">Comprehensive Agricultural Offerings</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+            <div class="w-full sm:w-1/2 md:w-1/3 p-4">
+                <img alt="Farmer in a field" class="w-full h-48 md:h-64 object-cover rounded-lg" 
+                     src="https://storage.googleapis.com/a1aa/image/wT4nyN5k0krgHpqPhVZy4aoQXr29Z9fsULWzlzvOHqdWQr8JA.jpg"/>
+                <p class="mt-4 text-gray-600 text-sm md:text-base">25 Years Of Experience In Agriculture Farming.</p>
+            </div>
+            <div class="w-full sm:w-1/2 md:w-1/3 p-4">
+                <img alt="Field of crops" class="w-full h-48 md:h-64 object-cover rounded-lg" 
+                     src="https://res.cloudinary.com/dvavtg6tx/image/upload/v1732860145/tani.jpg_y3yiyk.jpg"/>
+                <p class="mt-4 text-gray-600 text-sm md:text-base">100% Natural Healthy Food</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section class="py-12">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Comprehensive Agricultural Offerings</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <img alt="Farmer in the field" class="w-full h-auto rounded-lg mb-4" height="300" src="https://storage.googleapis.com/a1aa/image/QgbPqas16AJdANxUchcUOhzDJzvMndh8c9MLtcxogwkfrs8JA.jpg" width="400"/>
+                <h3 class="text-xl font-bold">25 Years</h3>
+                <p class="mt-2 text-gray-600">Of Experience In Agriculture Farming</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <img alt="Field of crops" class="w-full h-auto rounded-lg mb-4" height="300" src="https://storage.googleapis.com/a1aa/image/HnGB0SN2Vf2wTqM6EotrvjqxwiezKKjnsr6A3j8iOGVAYZ5TA.jpg" width="400"/>
+                <h3 class="text-xl font-bold">100%</h3>
+                <p class="mt-2 text-gray-600">Natural Healthy Food</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <img alt="Field of crops" class="w-full h-auto rounded-lg mb-4" height="300" src="https://storage.googleapis.com/a1aa/image/HnGB0SN2Vf2wTqM6EotrvjqxwiezKKjnsr6A3j8iOGVAYZ5TA.jpg" width="400"/>
+                <h3 class="text-xl font-bold">Explore Our Farm Products</h3>
+                <p class="mt-2 text-gray-600">Discover a wide range of high-quality farm products designed to enhance your agricultural enterprise.</p>
+            </div>
+        </div>
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-lg font-bold">1. Seeds and Seedlings</h4>
+                <p class="mt-2 text-gray-600">Choose from a variety of premium seeds and healthy seedlings to ensure a strong start for your crops.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-lg font-bold">2. Fertilizers and Soil Enhancers</h4>
+                <p class="mt-2 text-gray-600">Enhance soil fertility and promote healthy plant growth with our range of organic fertilizers and soil amendments.</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-lg font-bold">3. Crop Protection</h4>
+                <p class="mt-2 text-gray-600">Safeguard your crops from pests and diseases with our premium range of environmentally friendly crop protection solutions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Product Details Section -->
+<section class="py-12 bg-gray-100">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">We're Top Agriculture & Organic Enterprises</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <img alt="Farmer in the field" class="w-full h-auto rounded-lg mb-4" height="300" src="https://storage.googleapis.com/a1aa/image/QgbPqas16AJdANxUchcUOhzDJzvMndh8c9MLtcxogwkfrs8JA.jpg" width="400"/>
+                <h3 class="text-xl font-bold">Our Product Details</h3>
+                <p class="mt-2 text-gray-600">Discover a wide range of high-quality farm products designed to enhance your agricultural endeavors. We take pride in offering:</p>
+                <button class="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg">View More</button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-left">
+                <h4 class="text-lg font-bold">Organic Corn</h4>
+                <p class="mt-2 text-gray-600">Nature our variety of tractors and attachments designed.</p>
+                <h4 class="text-lg font-bold mt-4">Organic Tomato</h4>
+                <p class="mt-2 text-gray-600">Nature our variety of tractors and attachments designed.</p>
+                <h4 class="text-lg font-bold mt-4">Fruits & Meats</h4>
+                <p class="mt-2 text-gray-600">Explore our range of tractors and attachments designed.</p>
+                <h4 class="text-lg font-bold mt-4">Fresh Orange</h4>
+                <p class="mt-2 text-gray-600">Explore our range of tractors and attachments designed.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- FAQ Section -->
+<section class="py-12">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold mb-6">Frequently Answer And Question</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md text-left">
+            <div class="mb-4">
+                <h4 class="text-lg font-bold">How do I prepare my soil for planting?</h4>
+            </div>
+            <div class="mb-4">
+                <h4 class="text-lg font-bold">What are the key factors for successful crop rotation?</h4>
+            </div>
+            <div class="mb-4">
+                <h4 class="text-lg font-bold">What is organic farming, and how does it differ from conventional farming?</h4>
+                <p class="mt-2 text-gray-600">Conventional farming uses chemical fertilizers to promote plant growth, while organic farming employs manure and compost to fertilize the soil. Conventional farming sprays pesticides to get rid of pests, while organic farmers turn to insects and birds, mating disruptions, or traps.</p>
+            </div>
+            <div class="mb-4">
+                <h4 class="text-lg font-bold">How can I control weeds effectively without harming my crops?</h4>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<footer class="bg-gray-800 text-white py-6">
+    <div class="container mx-auto flex justify-between items-center">
+        <p>&copy; Pengairan Sawah Berbasis IOT.</p>
+        <div class="flex space-x-4">
+            <a href="https://wa.me/087844232534" target="_blank" class="text-white text-xl hover:text-green-500">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="https://github.com/muhammadsyaarif" target="_blank" class="text-white text-xl hover:text-gray-400">
+                <i class="fab fa-github"></i>
+            </a>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
